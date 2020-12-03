@@ -1,0 +1,22 @@
+<app-navigation-bar header="Home"></app-navigation-bar>
+
+<main>
+    <div class="container">
+        <div *ngIf="!address" class="row">
+            <div class="center-align">
+                <app-qr-code-reader (scanned)="onQrScan($event)"></app-qr-code-reader>
+            </div>
+        </div>
+        <div *ngIf="address" class="row">
+            <div class="center-align">
+                <h4 style="word-wrap: break-word;">
+                    Address : <span style="text-decoration: underline;">{{address}}</span>
+                </h4>
+                <h4>
+                    <span *ngIf="found" class="green-text">Is yours</span>
+                    <span *ngIf="!found" class="red-text">Is not yours</span>
+                </h4>
+            </div>
+        </div>
+    </div>
+</main>

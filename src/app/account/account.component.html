@@ -1,0 +1,25 @@
+<app-navigation-bar header="Account"></app-navigation-bar>
+
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="center-align">
+                <h2>{{selectedWalletAccount.name}}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="center-align">
+                <h3>Native Segwit</h3>
+                <app-qr-code [value]="bip84ExtendedPublicKey" style="width: 90vw"></app-qr-code>
+                <h6 style="word-wrap: break-word">{{bip84ExtendedPublicKey}}</h6>
+            </div>
+        </div>
+        <div *ngIf="showBip49" class="row">
+            <div class="center-align">
+                <h3>Compatibility Segwit</h3>
+                <app-qr-code [value]="bip49ExtendedPublicKey" style="width: 90vw"></app-qr-code>
+                <h6 style="word-wrap: break-word">{{bip49ExtendedPublicKey}}</h6>
+            </div>
+        </div>
+    </div>
+</main>

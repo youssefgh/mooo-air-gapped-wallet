@@ -1,0 +1,43 @@
+<app-navigation-bar header="Sign PSBT"></app-navigation-bar>
+
+<main>
+    <div class="container">
+        <div *ngIf="!signedPsbt" class="row">
+            <div class="center-align">
+                <app-qr-code-reader (scanned)="onQrScan($event)"></app-qr-code-reader>
+            </div>
+        </div>
+        <div *ngIf="signedPsbt" class="row">
+            <div class="center-align">
+                <h4>Sending :</h4>
+                <h5 *ngFor="let walletDestination of psbtTransactionDetails.walletDestinationList"
+                    style="word-wrap: break-word">
+                    <span class="green-text">{{walletDestination.amount}} BTC</span>
+                    =>
+                    <span style="text-decoration: underline;">{{walletDestination.address}}</span>
+                </h5>
+            </div>
+        </div>
+        <div *ngIf="signedPsbt" class="row">
+            <div class="center-align">
+                <h5>Fee:
+                    <span class="red-text">{{psbtTransactionDetails.fee}} sat ({{psbtTransactionDetails.feeRate}}
+                        sat/vB)</span>
+                </h5>
+            </div>
+        </div>
+        <div *ngIf="signedPsbt" class="row">
+            <div class="center-align">
+                <div class="btn" (click)="approveTransaction()">
+                    <i class="material-icons left">qr_code</i>
+                    Show
+                </div>
+            </div>
+        </div>
+        <div *ngIf="signedTransactionHex" class="row">
+            <div class="center-align">
+                <app-qr-code [value]="signedTransactionHex" style="width: 90vw"></app-qr-code>
+            </div>
+        </div>
+    </div>
+</main>

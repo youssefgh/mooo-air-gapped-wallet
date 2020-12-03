@@ -1,0 +1,29 @@
+<app-navigation-bar header="Accounts"></app-navigation-bar>
+
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="center-align">
+                <ul class="collection">
+                    <li *ngFor="let walletAccount of walletAccountList" class="collection-item"
+                        [routerLink]="['/account',walletAccount.index]">
+                        <div>
+                            {{walletAccount.index}} - {{walletAccount.name}}
+                            <a class="secondary-content">
+                                <i class="material-icons">send</i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="center-align">
+                <a class="waves-effect waves-light btn" (click)="add()">
+                    <i class="material-icons left">add</i>
+                    Add
+                </a>
+            </div>
+        </div>
+    </div>
+</main>

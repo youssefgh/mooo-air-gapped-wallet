@@ -1,0 +1,20 @@
+<app-navigation-bar header="Passphrase"></app-navigation-bar>
+
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="input-field">
+                <input id="passphrase" [(ngModel)]="mnemonic.passphrase" />
+                <label for="passphrase" class="active">Passphrase</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="center-align">
+                <a class="waves-effect waves-light btn-large" (click)="openWallet()">
+                    <i class="material-icons left">lock_open</i>
+                    Open Wallet
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
