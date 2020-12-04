@@ -96,7 +96,9 @@ export class QrCodeReaderComponent implements OnInit {
     }
 
     stopDecodeFromVideoDevice() {
-        this.scannerControls.stop();
+        if (this.scannerControls) {
+            this.scannerControls.stop();
+        }
         this.selectedMediaDeviceInfo = null;
         this.qrModal.close();
     }
