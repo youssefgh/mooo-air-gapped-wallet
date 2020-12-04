@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { BrowserQRCodeReader } from '@zxing/browser';
+import { BrowserQRCodeReader, IScannerControls } from '@zxing/browser';
 
 declare var M: any;
 
@@ -23,6 +23,8 @@ export class QrCodeReaderComponent implements OnInit {
     selectedMediaDeviceInfo: MediaDeviceInfo;
 
     useVideo: boolean;
+
+    scannerControls: IScannerControls;
 
     @ViewChild('qrModal', { static: true })
     qrModalRef: ElementRef;
@@ -79,16 +81,22 @@ export class QrCodeReaderComponent implements OnInit {
 
     decodeFromVideoDevice(deviceInfo: MediaDeviceInfo) {
         this.selectedMediaDeviceInfo = deviceInfo;
-        this.codeReader.decodeFromVideoDevice(deviceInfo.deviceId, 'video', (result, error, controls) => {
+        this.codeReader.decodeFromVideoDevice(deviceInfo.deviceId, 'video', (result) => {
             if (result) {
                 this.scanned.emit(result.getText());
-                controls.stop();
                 this.stopDecodeFromVideoDevice();
             }
-        });
+        })
+            .then(scannerControls => {
+                this.scannerControls = scannerControls;
+            }).catch(reason => {
+                console.error(reason);
+                this.errorThrown.emit(reason);
+            });
     }
 
     stopDecodeFromVideoDevice() {
+        this.scannerControls.stop();
         this.selectedMediaDeviceInfo = null;
         this.qrModal.close();
     }
