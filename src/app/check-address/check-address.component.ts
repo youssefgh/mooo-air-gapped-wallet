@@ -92,4 +92,8 @@ export class CheckAddressComponent {
         }
     }
 
+    clear() {
+        this.address = null;
+    }
+
 }
