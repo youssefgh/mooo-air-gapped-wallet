@@ -23,7 +23,7 @@
         </div>
         <div *ngIf="mnemonic" class="row">
             <div class="center-align">
-                <a class="waves-effect waves-light btn-large" (click)="save()">
+                <a class="waves-effect waves-light btn-large" (click)="confirm()">
                     <i class="material-icons left">save</i>
                     Save
                 </a>
@@ -31,3 +31,16 @@
         </div>
     </div>
 </main>
+
+<div class="modal" #confirmationModal>
+    <div class="modal-content">
+        <h4>Important !</h4>
+        <p>Make sure to write the mnemonic phrase offline (in a piece of paper, metal...) and save it in a secure
+            location</p>
+        <p>If this device is lost/damaged and without the combination of the mnemonic phrase + mnemonic passphrase, your
+            funds might become inaccessible forever</p>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-close waves-effect waves-green btn-flat red" (click)="save()">I understand</a>
+    </div>
+</div>

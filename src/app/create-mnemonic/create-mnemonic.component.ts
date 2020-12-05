@@ -1,4 +1,4 @@
-import { AfterContentChecked, Component } from '@angular/core';
+import { AfterContentChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import { environment } from '../../environments/environment';
@@ -12,13 +12,17 @@ declare var M: any;
     templateUrl: './create-mnemonic.component.html',
     styleUrls: ['./create-mnemonic.component.css'],
 })
-export class CreateMnemonicComponent implements AfterContentChecked {
+export class CreateMnemonicComponent implements OnInit, AfterContentChecked {
 
     environment = environment;
 
     mnemonic: Mnemonic;
 
     twentyFourWordsStrength = 256;
+
+    @ViewChild('confirmationModal', { static: true })
+    confirmationModalRef: ElementRef;
+    confirmationModal;
 
     constructor(
         private localStorageService: LocalStorageService,
@@ -29,9 +33,18 @@ export class CreateMnemonicComponent implements AfterContentChecked {
         }
     }
 
+    ngOnInit(): void {
+        const elem = this.confirmationModalRef.nativeElement;
+        this.confirmationModal = M.Modal.init(elem);
+    }
+
     newMnemonic() {
         this.mnemonic = new Mnemonic();
         this.mnemonic.phrase = Mnemonic.new(this.twentyFourWordsStrength).phrase;
+    }
+
+    confirm() {
+        this.confirmationModal.open();
     }
 
     save() {
