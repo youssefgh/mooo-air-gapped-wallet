@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import * as bitcoinjs from 'bitcoinjs-lib';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +8,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'mooo-air-gapped-wallet';
+  title = 'Mooo Air Gapped Wallet';
+
+  constructor() {
+    if (environment.network !== bitcoinjs.networks.bitcoin) {
+      this.title += ' (Testnet)';
+    }
+  }
 
 }
