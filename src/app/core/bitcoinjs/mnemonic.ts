@@ -24,8 +24,7 @@ export class Mnemonic {
             // TODO support other accounts
             const account = 0;
             for (const purpose of purposeArray) {
-                const hdRoot = HdRoot.from(this, purpose, network);
-                const pub = hdRoot.deriveHardened(purpose).deriveHardened(HdCoin.id(network)).deriveHardened(account).neutered().toBase58();
+                const pub = this.extendedPublicKey(purpose, account, network);
                 if (pub === key) {
                     return true;
                 }
@@ -45,6 +44,13 @@ export class Mnemonic {
 
     passphraseValid(mnemonicPassphraseHash: string) {
         return this.passphrase && Mnemonic.passphraseHashFrom(this.passphrase) === mnemonicPassphraseHash;
+    }
+
+    extendedPublicKey(purpose: number, account: number, network: bitcoinjs.Network) {
+        const hdRoot = HdRoot.from(this, purpose, network);
+        const accountNode = hdRoot.deriveHardened(purpose).deriveHardened(HdCoin.id(network)).
+            deriveHardened(account);
+        return accountNode.neutered().toBase58();
     }
 
 }

@@ -1,6 +1,5 @@
 import { AfterContentChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import * as bitcoinjs from 'bitcoinjs-lib';
 import { environment } from '../../environments/environment';
 import { Mnemonic } from '../core/bitcoinjs/mnemonic';
 import { LocalStorageService } from '../shared/local-storage.service';
@@ -39,8 +38,7 @@ export class CreateMnemonicComponent implements OnInit, AfterContentChecked {
     }
 
     newMnemonic() {
-        this.mnemonic = new Mnemonic();
-        this.mnemonic.phrase = Mnemonic.new(this.twentyFourWordsStrength).phrase;
+        this.mnemonic = Mnemonic.new(this.twentyFourWordsStrength);
     }
 
     confirm() {
@@ -59,10 +57,7 @@ export class CreateMnemonicComponent implements OnInit, AfterContentChecked {
     ngAfterContentChecked() {
         M.updateTextFields();
         const elements = document.getElementsByClassName('materialize-textarea') as HTMLCollectionOf<HTMLElement>;
-        // false postive
-        // tslint:disable-next-line: prefer-for-of
-        for (let i = 0; i < elements.length; i++) {
-            const element = elements[i];
+        for (const element of elements) {
             M.textareaAutoResize(element);
             let height = parseInt(element.style.height.replace('px', ''), 10);
             height = height + 2;

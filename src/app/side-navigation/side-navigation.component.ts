@@ -13,8 +13,6 @@ export class SideNavigationComponent implements OnInit {
 
     title: string;
 
-    constructor() { }
-
     ngOnInit() {
         const elems = document.querySelectorAll('.sidenav');
         M.Sidenav.init(elems, {});
