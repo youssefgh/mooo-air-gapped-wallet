@@ -158,7 +158,6 @@
       }
     }
   },
-  "defaultProject": "mooo-air-gapped-wallet",
   "cli": {
     "analytics": "cb1d4fbb-20f2-4f88-9e96-c0ad27dab199"
   }
