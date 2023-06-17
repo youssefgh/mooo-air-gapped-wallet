@@ -1,3 +1,4 @@
+import { BIP32Interface } from 'bip32';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import { WalletDestination } from './wallet-destination';
 
@@ -14,7 +15,7 @@ export class PsbtTransactionDetails {
     static from(
         signedPsbt: bitcoinjs.Psbt,
         purpose: number,
-        accountNode: bitcoinjs.BIP32Interface,
+        accountNode: BIP32Interface,
         lastUsedChangeIndex: number,
         gapLimit: number,
         network: bitcoinjs.Network

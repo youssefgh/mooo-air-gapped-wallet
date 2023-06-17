@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BIP32Interface } from 'bip32';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import { environment } from '../../environments/environment';
 import { HdCoin } from '../core/bitcoinjs/hdCoin';
@@ -72,8 +73,8 @@ export class CheckAddressComponent {
         this.found = false;
     }
 
-    addressExist(address: string, hdRoot: bitcoinjs.BIP32Interface, purpose: number, payement) {
-        let accountNode: bitcoinjs.BIP32Interface;
+    addressExist(address: string, hdRoot: BIP32Interface, purpose: number, payement) {
+        let accountNode: BIP32Interface;
         for (const walletAccount of this.localStorageService.walletAccountList) {
             accountNode = hdRoot.deriveHardened(purpose).deriveHardened(HdCoin.id(environment.network))
                 .deriveHardened(walletAccount.index);

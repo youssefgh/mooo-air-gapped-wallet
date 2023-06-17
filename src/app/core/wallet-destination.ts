@@ -1,3 +1,4 @@
+import { BIP32Interface } from 'bip32';
 import * as bitcoinjs from 'bitcoinjs-lib';
 
 export class WalletDestination {
@@ -37,7 +38,7 @@ export class WalletDestination {
 
     changeIndex(
         purpose: number,
-        accountNode: bitcoinjs.BIP32Interface,
+        accountNode: BIP32Interface,
         lastUsedChangeIndex: number,
         gapLimit: number,
         network: bitcoinjs.Network,

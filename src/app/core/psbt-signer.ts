@@ -1,3 +1,4 @@
+import { BIP32Interface } from 'bip32';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import { Network } from 'bitcoinjs-lib';
 import { AccountResult } from './account-result';
@@ -15,8 +16,8 @@ export class PsbtSigner {
         const psbt = bitcoinjs.Psbt.fromBuffer(decoded);
 
         let purpose: number;
-        let hdRoot: bitcoinjs.BIP32Interface;
-        let accountNode: bitcoinjs.BIP32Interface;
+        let hdRoot: BIP32Interface;
+        let accountNode: BIP32Interface;
         let accountResult: AccountResult;
         let i = 0;
         do {
@@ -37,7 +38,7 @@ export class PsbtSigner {
         return { psbt, accountResult, purpose, accountNode };
     }
 
-    signAll(psbt: bitcoinjs.Psbt, accountNode: bitcoinjs.BIP32Interface) {
+    signAll(psbt: bitcoinjs.Psbt, accountNode: BIP32Interface) {
         for (let i = 0; i < psbt.txInputs.length; i++) {
             const firstBip32Derivation = psbt.data.inputs[i].bip32Derivation[0];
             const childPath = firstBip32Derivation.path.replace('m/', '');
@@ -47,14 +48,14 @@ export class PsbtSigner {
         psbt.signAllInputsHD(accountNode);
     }
 
-    signIndependently(psbt: bitcoinjs.Psbt, accountNode: bitcoinjs.BIP32Interface) {
+    signIndependently(psbt: bitcoinjs.Psbt, accountNode: BIP32Interface) {
         for (let i = 0; i < psbt.txInputs.length; i++) {
             const path = psbt.data.inputs[i].bip32Derivation[0].path.replace('m/', '');
             psbt.signInput(psbt.txInputs[i].index, accountNode.derivePath(path));
         }
     }
 
-    searchCorespondingAccountNode(hdRoot: bitcoinjs.BIP32Interface, purpose: number, psbt: bitcoinjs.Psbt, accountGapLimit: number, network: Network) {
+    searchCorespondingAccountNode(hdRoot: BIP32Interface, purpose: number, psbt: bitcoinjs.Psbt, accountGapLimit: number, network: Network) {
         let accountIndex = -1;
         let accountNode;
         const sampleBip32Derivation = psbt.data.inputs[0].bip32Derivation[0];

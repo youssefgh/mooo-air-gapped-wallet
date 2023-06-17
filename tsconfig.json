@@ -1,5 +1,8 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+  },
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
@@ -11,9 +14,9 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "es2020",
+    "module": "ES2022",
     "lib": [
-      "es2018",
+      "ES2022",
       "dom",
       "dom.Iterable"
     ],
