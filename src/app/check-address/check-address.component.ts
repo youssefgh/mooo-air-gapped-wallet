@@ -7,8 +7,6 @@ import { HdRoot } from '../core/bitcoinjs/hdRoot';
 import { LocalStorageService } from '../shared/local-storage.service';
 import { SessionStorageService } from '../shared/session-storage.service';
 
-declare var M: any;
-
 @Component({
     selector: 'app-check-address',
     templateUrl: './check-address.component.html',

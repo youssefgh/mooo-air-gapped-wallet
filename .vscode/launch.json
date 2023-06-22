@@ -30,6 +30,20 @@
             "request": "launch",
             "reAttach": true,
             "addonPath": "${workspaceFolder}"
-        }
+        },
+        {
+            "name": "Jasmine Tests",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+            "args": [
+                "--project",
+                "${workspaceFolder}/test/config/tsconfig.json",
+                "${workspaceFolder}//node_modules/jasmine/bin/jasmine.js",
+                "--config=${workspaceFolder}/test/config/jasmine.json",
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart",
+        },
     ]
 }

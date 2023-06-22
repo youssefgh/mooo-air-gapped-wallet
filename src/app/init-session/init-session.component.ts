@@ -5,7 +5,7 @@ import { Mnemonic } from '../core/bitcoinjs/mnemonic';
 import { LocalStorageService } from '../shared/local-storage.service';
 import { SessionStorageService } from '../shared/session-storage.service';
 
-declare var M: any;
+declare const M: any;
 
 @Component({
     selector: 'app-init-session',

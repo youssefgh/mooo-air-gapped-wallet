@@ -2,8 +2,6 @@ import { Component, Input } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { LocalStorageService } from '../shared/local-storage.service';
 
-declare var M: any;
-
 @Component({
     selector: 'app-settings',
     templateUrl: './settings.component.html',

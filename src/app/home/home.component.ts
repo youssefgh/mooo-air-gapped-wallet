@@ -3,8 +3,6 @@ import { Router } from '@angular/router';
 import { LocalStorageService } from '../shared/local-storage.service';
 import { SessionStorageService } from '../shared/session-storage.service';
 
-declare var M: any;
-
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',

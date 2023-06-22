@@ -3,8 +3,6 @@ import { environment } from '../../environments/environment';
 import { WalletAccount } from '../core/wallet-account';
 import { LocalStorageService } from '../shared/local-storage.service';
 
-declare var M: any;
-
 @Component({
     selector: 'app-accounts',
     templateUrl: './accounts.component.html',

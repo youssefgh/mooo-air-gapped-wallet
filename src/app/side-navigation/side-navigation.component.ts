@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import { environment } from '../../environments/environment';
 
-declare var M: any;
+declare const M: any;
 
 @Component({
     selector: 'app-side-navigation',

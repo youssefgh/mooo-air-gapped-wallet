@@ -1,8 +1,6 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { BrowserQRCodeReader, IScannerControls } from '@zxing/browser';
 
-declare var M: any;
-
 @Component({
     selector: 'app-qr-code-reader',
     templateUrl: './qr-code-reader.component.html',
@@ -33,8 +31,6 @@ export class QrCodeReaderComponent implements OnInit {
 
     @ViewChild('fileInput', { static: true })
     fileInputRef: ElementRef;
-
-    constructor() { }
 
     ngOnInit() {
         BrowserQRCodeReader.listVideoInputDevices()
