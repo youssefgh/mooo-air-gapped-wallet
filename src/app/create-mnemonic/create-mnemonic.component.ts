@@ -15,8 +15,7 @@ export class CreateMnemonicComponent implements OnInit, AfterContentChecked {
 
     environment = environment;
 
-    mnemonic: Mnemonic;
-
+    mnemonic = new Mnemonic();
     twentyFourWordsStrength = 256;
 
     @ViewChild('confirmationModal', { static: true })

@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import { BIP32Interface } from 'bip32';
-import * as bitcoinjs from 'bitcoinjs-lib';
 import { environment } from '../../environments/environment';
-import { HdCoin } from '../core/bitcoinjs/hdCoin';
-import { HdRoot } from '../core/bitcoinjs/hdRoot';
+import { Derivator } from '../core/bitcoinjs/derivator';
+import { Mnemonic } from '../core/bitcoinjs/mnemonic';
 import { LocalStorageService } from '../shared/local-storage.service';
 import { SessionStorageService } from '../shared/session-storage.service';
 
@@ -19,75 +17,57 @@ export class CheckAddressComponent {
     address: string;
     found: boolean;
 
+    scanRange = 1000;
+    fromIndex = 0;
+    toIndex = this.scanRange;
+
     constructor(
         private localStorageService: LocalStorageService,
         private sessionStorageService: SessionStorageService,
     ) {
     }
 
-    static bip49Payment(publicKey: Buffer, network: bitcoinjs.Network) {
-        return bitcoinjs.payments.p2sh({
-            redeem: bitcoinjs.payments.p2wpkh({
-                pubkey: publicKey,
-                network
-            }),
-            network
-        });
-    }
-
-    static bip84Payment(publicKey: Buffer, network: bitcoinjs.Network) {
-        return bitcoinjs.payments.p2wpkh({
-            pubkey: publicKey,
-            network
-        });
-    }
-
-    static payementFromPurpose(purpose: number) {
-        let payement;
-        switch (purpose) {
-            case 84:
-                payement = this.bip84Payment;
-                break;
-            case 49:
-                payement = this.bip49Payment;
-                break;
-        }
-        return payement;
-    }
-
     onQrScan(text: string) {
         const mnemonic = this.sessionStorageService.mnemonic;
 
-        for (const purpose of this.localStorageService.purposeArray) {
-            const hdRoot = HdRoot.from(mnemonic, purpose, environment.network);
-            const payement = CheckAddressComponent.payementFromPurpose(purpose);
-            if (this.addressExist(text, hdRoot, purpose, payement)) {
-                this.address = text;
-                this.found = true;
-                return;
-            }
+        const purpose = this.purposeOf(text);
+        if (this.addressExist(text, mnemonic, purpose)) {
+            this.found = true;
+        } else {
+            this.found = false;
         }
         this.address = text;
-        this.found = false;
     }
 
-    addressExist(address: string, hdRoot: BIP32Interface, purpose: number, payement) {
-        let accountNode: BIP32Interface;
+    addressExist(address: string, mnemonic: Mnemonic, purpose: number) {
         for (const walletAccount of this.localStorageService.walletAccountList) {
-            accountNode = hdRoot.deriveHardened(purpose).deriveHardened(HdCoin.id(environment.network))
-                .deriveHardened(walletAccount.index);
-            let lastUsedExternalIndex = walletAccount.lastUsedExternalIndex(purpose);
-            if (!lastUsedExternalIndex) {
-                lastUsedExternalIndex = 0;
-            }
-            const searchLimit = lastUsedExternalIndex + this.localStorageService.gapLimit;
-            for (let i = 0; i < searchLimit; i++) {
-                const publicKey = accountNode.derive(0).derive(i).publicKey;
-                const addressToCheck = payement(publicKey, environment.network).address;
-                if (addressToCheck === address) {
-                    return true;
+            for (const change of [0, 1]) {
+                const extendedPublicKey = mnemonic.extendedPublicKey(purpose, walletAccount.index, environment.network)
+                const derivedList = Derivator.derive(extendedPublicKey, change, this.fromIndex, this.toIndex, environment.network);
+                for (const derived of derivedList) {
+                    if (derived.address.value === address) {
+                        return true;
+                    }
                 }
             }
+        }
+    }
+
+    more() {
+        this.fromIndex = this.toIndex;
+        this.toIndex += this.scanRange;
+        this.onQrScan(this.address);
+    }
+
+    purposeOf(address: string): number {
+        if (address.startsWith('bc1p') || address.startsWith('tb1p') || address.startsWith('bcrt1p')) {
+            return 86;
+        } else if (address.startsWith('bc1q') || address.startsWith('tb1q') || address.startsWith('bcrt1q')) {
+            return 84;
+        } else if (address.startsWith('3') || address.startsWith('2')) {
+            return 49;
+        } else if (address.startsWith('1') || address.startsWith('m') || address.startsWith('n')) {
+            return 44;
         }
     }
 

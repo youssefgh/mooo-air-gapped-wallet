@@ -2,12 +2,12 @@
 
 <main>
     <div class="container">
-        <div *ngIf="!signedPsbt" class="row">
+        <div *ngIf="!psbt" class="row">
             <div class="center-align">
                 <app-qr-code-reader (scanned)="onQrScan($event)"></app-qr-code-reader>
             </div>
         </div>
-        <div *ngIf="signedPsbt" class="row">
+        <div *ngIf="psbt" class="row">
             <div class="center-align">
                 <h4>Sending :</h4>
                 <h5 *ngFor="let walletDestination of psbtTransactionDetails.walletDestinationList"
@@ -18,7 +18,7 @@
                 </h5>
             </div>
         </div>
-        <div *ngIf="signedPsbt" class="row">
+        <div *ngIf="psbt?.signedTransaction" class="row">
             <div class="center-align">
                 <h5>Fee:
                     <span class="red-text">{{psbtTransactionDetails.fee}} sat ({{psbtTransactionDetails.feeRate}}
@@ -26,17 +26,17 @@
                 </h5>
             </div>
         </div>
-        <div *ngIf="signedPsbt" class="row">
+        <div *ngIf="!psbt.signedTransaction" class="row">
             <div class="center-align">
-                <div class="btn" (click)="approveTransaction()">
-                    <i class="material-icons left">qr_code</i>
-                    Show
+                <div class="btn" (click)="sign()">
+                    <i class="material-icons left">fingerprint</i>
+                    Sign
                 </div>
             </div>
         </div>
-        <div *ngIf="signedTransactionHex" class="row">
+        <div *ngIf="psbt?.signedTransaction" class="row">
             <div class="center-align">
-                <app-qr-code [value]="signedTransactionHex" style="width: 90vw"></app-qr-code>
+                <app-qr-code [value]="psbt.signedTransaction" style="width: 90vw"></app-qr-code>
             </div>
         </div>
     </div>

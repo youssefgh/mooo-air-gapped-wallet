@@ -1,7 +1,8 @@
 import * as bip39 from 'bip39';
 import * as bitcoinjs from 'bitcoinjs-lib';
-import { HdCoin } from './hdCoin';
-import { HdRoot } from './hdRoot';
+import { Bip32Utils } from './bip32.utils';
+import { HdCoin } from './hd-coin';
+import { HdRoot } from './hd-root';
 
 export class Mnemonic {
 
@@ -20,7 +21,7 @@ export class Mnemonic {
 
     matchsKey(key: string, network: bitcoinjs.Network) {
         try {
-            const purposeArray = [84, 49, 44];
+            const purposeArray = [86, 84, 49, 44];
             // TODO support other accounts
             const account = 0;
             for (const purpose of purposeArray) {
@@ -51,6 +52,23 @@ export class Mnemonic {
         const accountNode = hdRoot.deriveHardened(purpose).deriveHardened(HdCoin.id(network)).
             deriveHardened(account);
         return accountNode.neutered().toBase58();
+    }
+
+    descriptor(purpose: number, account: number, network: bitcoinjs.Network) {
+        let template: string;
+        switch (purpose) {
+            case 86: template = 'tr([X1X2]X3X4)'; break;
+            case 84: template = 'wpkh([X1X2]X3X4)'; break;
+            case 49: template = 'sh(wpkh([X1X2]X3X4))'; break;
+        }
+        const seed = bip39.mnemonicToSeedSync(this.phrase, this.passphrase);
+        const hdRoot = Bip32Utils.instance.fromSeed(seed, network);
+        const accountNode = hdRoot.deriveHardened(purpose).deriveHardened(HdCoin.id(network)).
+            deriveHardened(account);
+        template = template.replace('X1', hdRoot.fingerprint.toString('hex'));
+        template = template.replace('X2', '/' + purpose + "'/" + HdCoin.id(network) + "'/" + account + "'");
+        template = template.replace('X3', accountNode.neutered().toBase58());
+        return template;
     }
 
 }

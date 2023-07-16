@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import * as bitcoinjs from 'bitcoinjs-lib';
 import { environment } from '../../environments/environment';
-import { PsbtSigner } from '../core/psbt-signer';
+import { Psbt } from '../core/bitcoinjs/psbt';
 import { PsbtTransactionDetails } from '../core/psbt-transaction-details';
 import { LocalStorageService } from '../shared/local-storage.service';
 import { SessionStorageService } from '../shared/session-storage.service';
@@ -17,11 +16,8 @@ export class SignPsbtComponent {
 
     network = environment.network;
 
-    signedPsbt: bitcoinjs.Psbt;
+    psbt: Psbt;
     psbtTransactionDetails: PsbtTransactionDetails;
-    signedTransactionHex: string;
-
-    psbtSigner = new PsbtSigner();
 
     constructor(
         private localStorageService: LocalStorageService,
@@ -31,28 +27,25 @@ export class SignPsbtComponent {
 
     onQrScan(text: string) {
         try {
-            const signed = this.psbtSigner.sign(text, this.sessionStorageService.mnemonic, this.localStorageService.purposeArray, this.localStorageService.accountGapLimit, this.network);
-
-            const lastUsedChangeIndex = this.localStorageService.walletAccountList[signed.accountResult.index].lastUsedChangeIndex(signed.purpose);
-
-            this.psbtTransactionDetails = PsbtTransactionDetails.from(this.signedPsbt, signed.purpose, signed.accountNode,
-                lastUsedChangeIndex, this.localStorageService.gapLimit, this.network);
-            if (this.psbtTransactionDetails.maxChangeIndex) {
-                this.localStorageService.walletAccountList[signed.accountResult.index].
-                    updateLastUsedChangeIndex(this.psbtTransactionDetails.maxChangeIndex, signed.purpose);
-                this.localStorageService.saveWalletAccountList(this.localStorageService.walletAccountList);
+            let psbt: Psbt;
+            try {
+                psbt = Psbt.fromBase43(text, this.network);
+            } catch (error) {
             }
-            this.signedPsbt = signed.psbt;
+            if (!psbt) {
+                psbt = Psbt.fromBase64(text, this.network);
+            }
+            this.psbtTransactionDetails = PsbtTransactionDetails.from(psbt.object, this.network);
+            this.psbt = psbt;
         } catch (error) {
-            if ((error as Error).message === PsbtSigner.ACCOUNT_NOT_FOUND) {
-                alert('Account not found');
-            }
+            alert('Error while importing PSBT');
             console.error((error as Error).stack);
         }
     }
 
-    approveTransaction() {
-        this.signedTransactionHex = this.signedPsbt.extractTransaction().toHex();
+    sign() {
+        this.psbt.sign(this.sessionStorageService.mnemonic);
+        this.psbtTransactionDetails.calculateFees();
     }
 
 }

@@ -13,10 +13,6 @@ export class LocalStorageService {
 
     showBip49: boolean;
 
-    purposeArray = [84, 49];
-    gapLimit = 100;
-    accountGapLimit = 10;
-
     constructor() {
         this.init();
     }

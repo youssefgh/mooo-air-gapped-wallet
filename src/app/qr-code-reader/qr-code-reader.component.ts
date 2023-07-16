@@ -1,6 +1,8 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { BrowserQRCodeReader, IScannerControls } from '@zxing/browser';
 
+declare const M: any;
+
 @Component({
     selector: 'app-qr-code-reader',
     templateUrl: './qr-code-reader.component.html',

@@ -14,7 +14,13 @@
                 </h4>
                 <h4>
                     <span *ngIf="found" class="green-text">Is yours</span>
-                    <span *ngIf="!found" class="red-text">Is not yours</span>
+                    <span *ngIf="!found" class="orange-text">
+                        We couldn't find this address in your first {{toIndex}} addresses
+                    </span>
+                    <a *ngIf="!found" class="waves-effect waves-light btn" (click)="more()">
+                        <i class="material-icons left">cached</i>
+                        Search more
+                    </a>
                 </h4>
             </div>
         </div>
