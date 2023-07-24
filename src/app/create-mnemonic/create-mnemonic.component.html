@@ -4,8 +4,7 @@
     <div class="container">
         <div class="row">
             <div class="center-align">
-                <a class="waves-effect waves-light btn-large" [ngClass]="{'pulse': mnemonic == null}"
-                    (click)="newMnemonic()">Generate</a>
+                <a class="waves-effect waves-light btn-large" (click)="newMnemonic()">Generate</a>
             </div>
         </div>
         <div *ngIf="mnemonic" class="row">

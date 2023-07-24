@@ -20,7 +20,7 @@ export class PsbtTransactionDetails {
 
         for (let i = 0; i < psbt.txOutputs.length; i++) {
             const txOutput = psbt.txOutputs[i];
-            if (psbt.data.outputs[i].tapBip32Derivation || psbt.data.outputs[i].bip32Derivation) {
+            if (!psbt.data.outputs[i].tapBip32Derivation && !psbt.data.outputs[i].bip32Derivation) {
                 const walletDestination = new WalletDestination();
                 walletDestination.address = bitcoinjs.address.fromOutputScript(txOutput.script, network);
                 walletDestination.amount = txOutput.value / SAT_IN_BITCOIN;
