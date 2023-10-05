@@ -4,7 +4,8 @@
     <div class="container">
         <div *ngIf="!address" class="row">
             <div class="center-align">
-                <app-qr-code-reader (scanned)="onQrScan($event)"></app-qr-code-reader>
+                <app-qr-code-reader (created)="onQrReaderCreated($event)"
+                    (scanned)="onQrScan($event)"></app-qr-code-reader>
             </div>
         </div>
         <div *ngIf="address" class="row">
@@ -18,7 +19,7 @@
                         We couldn't find this address in your first {{toIndex}} addresses
                     </span>
                     <a *ngIf="!found" class="waves-effect waves-light btn" (click)="more()">
-                        <i class="material-icons left">cached</i>
+                        <i class="material-symbols-outlined left">cached</i>
                         Search more
                     </a>
                 </h4>
@@ -27,7 +28,7 @@
         <div *ngIf="address" class="row">
             <div class="center-align">
                 <a class="waves-effect waves-light btn" (click)="clear()">
-                    <i class="material-icons left">cached</i>
+                    <i class="material-symbols-outlined left">cached</i>
                     Retry
                 </a>
             </div>

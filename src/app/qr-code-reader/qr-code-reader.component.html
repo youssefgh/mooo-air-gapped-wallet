@@ -1,6 +1,5 @@
 <div *ngIf="!useVideo" class="btn" (click)="decodeFromFile()">
-    <i class="material-icons left">qr_code</i>
-    <span>Import</span>
+    <i class="material-symbols-outlined">qr_code</i>
 </div>
 <div class="hide">
     <input type="file" accept="image/*" capture="camera" (change)="onPictureChange($event)" #fileInput />
@@ -10,8 +9,7 @@
 </div>
 
 <div *ngIf="useVideo" class="btn" (click)="decodeFromVideo()">
-    <i class="material-icons left">qr_code</i>
-    <span>Scan</span>
+    <i class="material-symbols-outlined">qr_code</i>
 </div>
 
 <div class="modal" style="width: 80vw;" #qrModal>

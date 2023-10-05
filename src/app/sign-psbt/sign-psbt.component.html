@@ -4,7 +4,8 @@
     <div class="container">
         <div *ngIf="!psbt" class="row">
             <div class="center-align">
-                <app-qr-code-reader (scanned)="onQrScan($event)"></app-qr-code-reader>
+                <app-qr-code-reader (created)="onQrReaderCreated($event)"
+                    (scanned)="onQrScan($event)"></app-qr-code-reader>
             </div>
         </div>
         <div *ngIf="psbt" class="row">
@@ -15,28 +16,35 @@
                     <span class="green-text">{{walletDestination.amount}} BTC</span>
                     =>
                     <span style="text-decoration: underline;">{{walletDestination.address}}</span>
+                    <span *ngIf="walletDestination.change" class="new badge orange" data-badge-caption="Change"></span>
                 </h5>
             </div>
         </div>
-        <div *ngIf="psbt?.signedTransaction" class="row">
+        <div *ngIf="signResult?.signedTransaction" class="row">
             <div class="center-align">
                 <h5>Fee:
-                    <span class="red-text">{{psbtTransactionDetails.fee}} sat ({{psbtTransactionDetails.feeRate}}
-                        sat/vB)</span>
+                    <span class="red-text">
+                        {{psbtTransactionDetails.fee}} sat ({{psbtTransactionDetails.feeRate}} sat/vB)
+                    </span>
                 </h5>
             </div>
         </div>
-        <div *ngIf="!psbt.signedTransaction" class="row">
+        <div *ngIf="!signResult.signedTransaction" class="row">
             <div class="center-align">
                 <div class="btn" (click)="sign()">
-                    <i class="material-icons left">fingerprint</i>
+                    <i class="material-symbols-outlined left">fingerprint</i>
                     Sign
                 </div>
             </div>
         </div>
-        <div *ngIf="psbt?.signedTransaction" class="row">
+        <div *ngIf="signResult?.signedTransaction" class="row">
             <div class="center-align">
-                <app-qr-code [value]="psbt.signedTransaction" style="width: 90vw"></app-qr-code>
+                <app-qr-code [value]="signResult.signedTransaction" style="width: 90vw"></app-qr-code>
+            </div>
+        </div>
+        <div *ngIf="signResult?.psbtBase64" class="row">
+            <div class="center-align">
+                <app-qr-code [value]="signResult.psbtBase64" style="width: 90vw"></app-qr-code>
             </div>
         </div>
     </div>

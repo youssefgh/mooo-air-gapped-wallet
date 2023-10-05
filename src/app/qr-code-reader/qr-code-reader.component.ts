@@ -12,19 +12,19 @@ export class QrCodeReaderComponent implements OnInit {
 
     @Output()
     scanned = new EventEmitter<string>();
-
     @Output()
-    errorThrown = new EventEmitter<string>();
+    created = new EventEmitter<QrCodeReaderComponent>();
+    @Output()
+    error = new EventEmitter<string>();
 
     codeReader = new BrowserQRCodeReader();
+    scannerControls: IScannerControls;
 
     videoInputDevices: MediaDeviceInfo[];
 
     selectedMediaDeviceInfo: MediaDeviceInfo;
 
     useVideo: boolean;
-
-    scannerControls: IScannerControls;
 
     @ViewChild('qrModal', { static: true })
     qrModalRef: ElementRef;
@@ -43,7 +43,7 @@ export class QrCodeReaderComponent implements OnInit {
                 }
             })
             .catch(err => {
-                console.error(err);
+                console.log(err);
                 this.useVideo = false;
             });
 
@@ -53,6 +53,7 @@ export class QrCodeReaderComponent implements OnInit {
                 this.selectedMediaDeviceInfo = null;
             }
         });
+        this.created.emit(this);
     }
 
     decodeFromFile() {
@@ -68,7 +69,7 @@ export class QrCodeReaderComponent implements OnInit {
                 this.scanned.emit(result.getText());
             }).catch(err => {
                 console.error(err);
-                this.errorThrown.emit(err);
+                this.error.emit(err);
             });
         }
     }
@@ -77,27 +78,24 @@ export class QrCodeReaderComponent implements OnInit {
         this.qrModal.open();
     }
 
-    decodeFromVideoDevice(deviceInfo: MediaDeviceInfo) {
+    async decodeFromVideoDevice(deviceInfo: MediaDeviceInfo) {
         this.selectedMediaDeviceInfo = deviceInfo;
-        this.codeReader.decodeFromVideoDevice(deviceInfo.deviceId, 'video', (result) => {
-            if (result) {
-                this.scanned.emit(result.getText());
-                this.stopDecodeFromVideoDevice();
-            }
-        })
-            .then(scannerControls => {
-                this.scannerControls = scannerControls;
-            }).catch(reason => {
-                console.error(reason);
-                this.errorThrown.emit(reason);
+        await this.codeReader
+            .decodeFromVideoDevice(deviceInfo.deviceId, 'video',
+                (result, error, scannerControls) => {
+                    this.scannerControls = scannerControls;
+                    if (result) {
+                        this.scanned.emit(result.getText());
+                    }
+                })
+            .catch(err => {
+                console.error(err);
+                this.error.emit(err);
             });
     }
 
     stopDecodeFromVideoDevice() {
-        if (this.scannerControls) {
-            this.scannerControls.stop();
-        }
-        this.selectedMediaDeviceInfo = null;
+        this.scannerControls?.stop();
         this.qrModal.close();
     }
 

@@ -1,6 +1,9 @@
 import * as bip39 from 'bip39';
 import * as bitcoinjs from 'bitcoinjs-lib';
-import { Bip32Utils } from './bip32.utils';
+import { OutputDescriptor } from '../output-descriptor';
+import { OutputDescriptorKey } from '../output-descriptor-key';
+import { Derivator } from './derivator';
+import { Derived } from './derived';
 import { HdCoin } from './hd-coin';
 import { HdRoot } from './hd-root';
 
@@ -19,22 +22,6 @@ export class Mnemonic {
         return bitcoinjs.crypto.sha256(Buffer.from(passphrase)).toString('hex');
     }
 
-    matchsKey(key: string, network: bitcoinjs.Network) {
-        try {
-            const purposeArray = [86, 84, 49, 44];
-            // TODO support other accounts
-            const account = 0;
-            for (const purpose of purposeArray) {
-                const pub = this.extendedPublicKey(purpose, account, network);
-                if (pub === key) {
-                    return true;
-                }
-            }
-        } catch (e) {
-        }
-        return false;
-    }
-
     phraseValid() {
         return bip39.validateMnemonic(this.phrase);
     }
@@ -47,28 +34,72 @@ export class Mnemonic {
         return this.passphrase && Mnemonic.passphraseHashFrom(this.passphrase) === mnemonicPassphraseHash;
     }
 
-    extendedPublicKey(purpose: number, account: number, network: bitcoinjs.Network) {
-        const hdRoot = HdRoot.from(this, purpose, network);
+    finalNode(purpose: number, account: number, script: number, network: bitcoinjs.Network) {
+        const hdRoot = HdRoot.from(this, network);
         const accountNode = hdRoot.deriveHardened(purpose).deriveHardened(HdCoin.id(network)).
             deriveHardened(account);
-        return accountNode.neutered().toBase58();
+        if (script) {
+            return accountNode.deriveHardened(script);
+        }
+        return accountNode;
     }
 
-    descriptor(purpose: number, account: number, network: bitcoinjs.Network) {
-        let template: string;
-        switch (purpose) {
-            case 86: template = 'tr([X1X2]X3X4)'; break;
-            case 84: template = 'wpkh([X1X2]X3X4)'; break;
-            case 49: template = 'sh(wpkh([X1X2]X3X4))'; break;
+    deriveDescriptors(purpose: number, coinType: number, account: number, script: number, network: bitcoinjs.Network) {
+        let publicDescriptor: string;
+        let privateDescriptor: string;
+        let publicDescriptorKey: string;
+        let privateDescriptorKey: string;
+
+        const hdRoot = HdRoot.from(this, network);
+        const finalNode = this.finalNode(purpose, account, script, network);
+
+        const publicOutputDescriptorKey = new OutputDescriptorKey();
+        publicOutputDescriptorKey.fingerprint = hdRoot.fingerprint.toString('hex');
+        publicOutputDescriptorKey.derivation = `/${purpose}'/${coinType}'/${account}'`;
+        if (purpose == 48) {
+            publicOutputDescriptorKey.derivation = `${publicOutputDescriptorKey.derivation}/${script}'`;
         }
-        const seed = bip39.mnemonicToSeedSync(this.phrase, this.passphrase);
-        const hdRoot = Bip32Utils.instance.fromSeed(seed, network);
-        const accountNode = hdRoot.deriveHardened(purpose).deriveHardened(HdCoin.id(network)).
-            deriveHardened(account);
-        template = template.replace('X1', hdRoot.fingerprint.toString('hex'));
-        template = template.replace('X2', '/' + purpose + "'/" + HdCoin.id(network) + "'/" + account + "'");
-        template = template.replace('X3', accountNode.neutered().toBase58());
-        return template;
+        publicOutputDescriptorKey.value = finalNode.neutered().toBase58();
+        if (purpose == 48) {
+            publicDescriptorKey = publicOutputDescriptorKey.toString();
+        } else {
+            const publicOutputDescriptor = new OutputDescriptor();
+            publicOutputDescriptor.script = OutputDescriptor.scriptFromPurpose(purpose);
+            publicOutputDescriptor.key = publicOutputDescriptorKey;
+            publicDescriptor = publicOutputDescriptor.toString();
+        }
+
+        const privateOutputDescriptorKey = new OutputDescriptorKey();
+        privateOutputDescriptorKey.fingerprint = hdRoot.fingerprint.toString('hex');
+        privateOutputDescriptorKey.derivation = `/${purpose}'/${coinType}'/${account}'`;
+        if (purpose == 48) {
+            privateOutputDescriptorKey.derivation = `${privateOutputDescriptorKey.derivation}/${script}'`;
+        }
+        privateOutputDescriptorKey.value = finalNode.toBase58();
+        if (purpose == 48) {
+            privateDescriptorKey = privateOutputDescriptorKey.toString();
+        } else {
+            const privateOutputDescriptor = new OutputDescriptor();
+            privateOutputDescriptor.script = OutputDescriptor.scriptFromPurpose(purpose);
+            privateOutputDescriptor.key = privateOutputDescriptorKey;
+            privateDescriptor = privateOutputDescriptor.toString();
+        }
+
+        return { publicDescriptor, privateDescriptor, publicDescriptorKey, privateDescriptorKey };
+    }
+
+    deriveList(purpose: number, coinType: number, account: number, script: number, change: number, startIndex: number, endIndex: number, network: bitcoinjs.Network) {
+        let derivedArray: Array<Derived>;
+
+        const finalNode = this.finalNode(purpose, account, script, network);
+
+        if (purpose !== 48) {
+            derivedArray = Derivator.deriveList(purpose, finalNode.derive(change), startIndex, endIndex, network);
+        }
+
+        const deriveDescriptorsResponse = this.deriveDescriptors(purpose, coinType, account, script, network);
+
+        return { publicDescriptor: deriveDescriptorsResponse.publicDescriptor, privateDescriptor: deriveDescriptorsResponse.privateDescriptor, publicDescriptorKey: deriveDescriptorsResponse.publicDescriptorKey, privateDescriptorKey: deriveDescriptorsResponse.privateDescriptorKey, derivedArray };
     }
 
 }

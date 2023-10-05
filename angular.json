@@ -14,11 +14,13 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
+              "@ngraveio/bc-ur",
               "@zxing/browser",
               "base-x",
               "bip32",
               "bip39",
               "bitcoinjs-lib",
+              "buffer",
               "qrcode",
               "materialize-css",
               "zone.js"

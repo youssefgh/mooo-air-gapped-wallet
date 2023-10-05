@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { HdCoin } from '../core/bitcoinjs/hd-coin';
 import { WalletAccount } from '../core/wallet-account';
 import { LocalStorageService } from '../shared/local-storage.service';
 import { SessionStorageService } from '../shared/session-storage.service';
@@ -20,12 +21,10 @@ export class AccountComponent implements OnInit {
 
     showBip49: boolean;
 
-    bip86ExtendedPublicKey: string;
-    bip86Descriptor: string;
-    bip84ExtendedPublicKey: string;
-    bip84Descriptor: string;
-    bip49ExtendedPublicKey: string;
-    bip49Descriptor: string;
+    bip86PublicDescriptor: string;
+    bip84PublicDescriptor: string;
+    bip49PublicDescriptor: string;
+    bip48PublicDescriptorKey: string;
 
     constructor(
         private localStorageService: LocalStorageService,
@@ -35,13 +34,12 @@ export class AccountComponent implements OnInit {
         const accountIndex = parseInt(this.route.snapshot.paramMap.get('index'), 10);
         this.selectedWalletAccount = localStorageService.walletAccountList[accountIndex];
         this.showBip49 = localStorageService.showBip49;
-        this.bip86ExtendedPublicKey = this.sessionStorageService.mnemonic.extendedPublicKey(86, this.selectedWalletAccount.index, environment.network);
-        this.bip86Descriptor = this.sessionStorageService.mnemonic.descriptor(86, this.selectedWalletAccount.index, environment.network);
-        this.bip84ExtendedPublicKey = this.sessionStorageService.mnemonic.extendedPublicKey(84, this.selectedWalletAccount.index, environment.network);
-        this.bip84Descriptor = this.sessionStorageService.mnemonic.descriptor(84, this.selectedWalletAccount.index, environment.network);
+        const coinType = HdCoin.id(environment.network);
+        this.bip86PublicDescriptor = this.sessionStorageService.mnemonic.deriveDescriptors(86, coinType, this.selectedWalletAccount.index, undefined, environment.network).publicDescriptor;
+        this.bip84PublicDescriptor = this.sessionStorageService.mnemonic.deriveDescriptors(84, coinType, this.selectedWalletAccount.index, undefined, environment.network).publicDescriptor;
+        this.bip48PublicDescriptorKey = this.sessionStorageService.mnemonic.deriveDescriptors(48, coinType, this.selectedWalletAccount.index, 2, environment.network).publicDescriptorKey;
         if (this.showBip49) {
-            this.bip49ExtendedPublicKey = this.sessionStorageService.mnemonic.extendedPublicKey(49, this.selectedWalletAccount.index, environment.network);
-            this.bip49Descriptor = this.sessionStorageService.mnemonic.descriptor(49, this.selectedWalletAccount.index, environment.network);
+            this.bip49PublicDescriptor = this.sessionStorageService.mnemonic.deriveDescriptors(49, coinType, this.selectedWalletAccount.index, undefined, environment.network).publicDescriptor;
         }
     }
 
