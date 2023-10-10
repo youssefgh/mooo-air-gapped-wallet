@@ -40,7 +40,7 @@ export class SignPsbtComponent {
             if (!psbt) {
                 psbt = Psbt.fromBase64(text, this.environment.network);
             }
-            this.psbtTransactionDetails = PsbtTransactionDetails.from(psbt.object, this.environment.network);
+            this.psbtTransactionDetails = PsbtTransactionDetails.fromSigned(this.sessionStorageService.mnemonic, psbt.object, this.environment.network);
             this.psbt = psbt;
         } catch (error) {
             alert('Error while importing PSBT');

@@ -29,7 +29,7 @@
                 </h5>
             </div>
         </div>
-        <div *ngIf="!signResult.signedTransaction" class="row">
+        <div *ngIf="psbt && !signResult" class="row">
             <div class="center-align">
                 <div class="btn" (click)="sign()">
                     <i class="material-symbols-outlined left">fingerprint</i>
