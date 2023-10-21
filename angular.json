@@ -21,7 +21,6 @@
               "bip39",
               "bitcoinjs-lib",
               "buffer",
-              "qrcode",
               "materialize-css",
               "zone.js"
             ],

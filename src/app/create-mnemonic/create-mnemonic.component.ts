@@ -41,7 +41,11 @@ export class CreateMnemonicComponent implements OnInit, AfterContentChecked {
     }
 
     confirm() {
-        this.confirmationModal.open();
+        if (this.mnemonic.phraseValid()) {
+            this.confirmationModal.open();
+        } else {
+            M.toast({ html: 'Invalid bip39 mnemonic !', classes: 'red' });
+        }
     }
 
     save() {

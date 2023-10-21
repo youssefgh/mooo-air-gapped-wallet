@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="center-align">
                             <h3>Descriptor</h3>
-                            <app-qr-code [value]="bip86PublicDescriptor"></app-qr-code>
+                            <app-qr-code [value]="[bip86PublicDescriptor]"></app-qr-code>
                             <h6 style="word-wrap: break-word">{{bip86PublicDescriptor}}</h6>
                         </div>
                     </div>
@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="center-align">
                             <h3>Descriptor</h3>
-                            <app-qr-code [value]="bip84PublicDescriptor"></app-qr-code>
+                            <app-qr-code [value]="[bip84PublicDescriptor]"></app-qr-code>
                             <h6 style="word-wrap: break-word">{{bip84PublicDescriptor}}</h6>
                         </div>
                     </div>
@@ -38,19 +38,20 @@
                     <div class="row">
                         <div class="center-align">
                             <h3>Descriptor key</h3>
-                            <app-qr-code [value]="bip48PublicDescriptorKey"></app-qr-code>
+                            <app-qr-code [value]="[bip48PublicDescriptorKey]"></app-qr-code>
                             <h6 style="word-wrap: break-word">{{bip48PublicDescriptorKey}}</h6>
                         </div>
                     </div>
                 </div>
             </li>
             <li *ngIf="showBip49">
-                <div class="collapsible-header"><i class="material-symbols-outlined">qr_code</i>Compatibility Segwit</div>
+                <div class="collapsible-header"><i class="material-symbols-outlined">qr_code</i>Compatibility Segwit
+                </div>
                 <div class="collapsible-body">
                     <div class="row">
                         <div class="center-align">
                             <h3>Descriptor</h3>
-                            <app-qr-code [value]="bip49PublicDescriptor"></app-qr-code>
+                            <app-qr-code [value]="[bip49PublicDescriptor]"></app-qr-code>
                             <h6 style="word-wrap: break-word">{{bip49PublicDescriptor}}</h6>
                         </div>
                     </div>

@@ -23,7 +23,7 @@
         <div *ngIf="mnemonic" class="row">
             <div class="center-align">
                 <a class="waves-effect waves-light btn-large"
-                    [ngClass]="{'disabled':!mnemonic.phrase || !mnemonic.phraseValid()}" (click)="confirm()">
+                    [ngClass]="{'disabled':!mnemonic.phrase}" (click)="confirm()">
                     <i class="material-symbols-outlined left">save</i>
                     Save
                 </a>

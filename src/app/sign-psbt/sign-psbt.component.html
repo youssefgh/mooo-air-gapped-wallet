@@ -37,15 +37,23 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="signResult?.signedTransaction" class="row">
+        <div *ngIf="selectedQrList" class="row">
             <div class="center-align">
-                <app-qr-code [value]="signResult.signedTransaction" style="width: 90vw"></app-qr-code>
+                <h5 *ngIf="signResult.signedTransaction">Signed transaction :</h5>
+                {{signResult.threshold}}
+                {{signResult.signatureCount}}
+                <h5
+                    *ngIf="signResult.psbtBase64 && signResult.threshold && signResult.signatureCount < signResult.threshold">
+                    Psbt ({{signResult.signatureCount}} of {{signResult.threshold}} signed) :
+                </h5>
+                <h5 *ngIf="signResult.psbtBase64 && !signResult.threshold">
+                    Psbt ({{signResult.signatureCount}} of ? signed) :
+                </h5>
+                <app-qr-code [value]="selectedQrList" style="width: 90vw"></app-qr-code>
             </div>
         </div>
-        <div *ngIf="signResult?.psbtBase64" class="row">
-            <div class="center-align">
-                <app-qr-code [value]="signResult.psbtBase64" style="width: 90vw"></app-qr-code>
-            </div>
-        </div>
+    </div>
+    <div *ngIf="urDecoder.expectedPartCount() > 0" class="progress" style="bottom: 0; position: fixed;">
+        <div class="determinate" [style.width.%]="urDecoder.getProgress()*100"></div>
     </div>
 </main>
