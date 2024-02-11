@@ -16,7 +16,7 @@
         </div>
         <div *ngIf="mnemonic" class="row">
             <div class="input-field">
-                <input id="passphrase" [(ngModel)]="mnemonic.passphrase" />
+                <input id="passphrase" autocomplete="off" [(ngModel)]="mnemonic.passphrase" />
                 <label for="passphrase" class="active">Passphrase</label>
             </div>
         </div>
